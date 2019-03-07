@@ -24,4 +24,11 @@
 
 - name: Create a security group
   ali_security_group:
-     alicloud_region: "{{ alicloud_region }}"
+    alicloud_region: "{{ alicloud_region }}"
+    state: present
+    name: "{{ sgroups.docker-sg.name }}"
+    description: "{{  sgroups.docker-sg.description }}"
+    vpc_id: "{{vpc.vpcs.0.id}}"
+    rules: "{{  sgroups.docker-sg.inboundRules }}"
+    rules_egress: "{{  sgroups.docker-sg.outboundRules }}"
+  register: sg
