@@ -11,9 +11,9 @@ vpc_name: "waldens-vpc"
 vpc_description: "Waldens vpc"
 
 #vswitch configure
-vswitch_cidr_block: "192.168.0.0/16"
+vswitch_cidr_block: "192.168.1.0/24"
 vswitch_name: "waldens-vswitch"
-vpc_description: "Waldens vswitch"
+vswitch_description: "Waldens vswitch"
 
 #security group configure
 sgroups:

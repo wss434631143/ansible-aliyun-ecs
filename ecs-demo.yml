@@ -1,0 +1,90 @@
+- name: basic provisioning example
+  hosts: localhost
+  vars:
+    alicloud_access_key: LTAI5aU8ATcDCgh1
+    alicloud_secret_key: bk5EjMlSLhCDv5YK5RkxMrHUayQTJk
+    alicloud_region: cn-hanzhou
+    image: centos_7_06_64_20G_alibase_20190218.vhd
+    instance_type: ecs.t5-lc1m1.small
+    vswitch_id: vsw-walden
+    assign_public_ip: True
+    max_bandwidth_out: 10
+    host_name: node
+    password: walden
+    system_disk_category: cloud_efficiency
+    system_disk_size: 100
+    internet_charge_type: PayByBandwidth
+    security_groups: ["sg-f2rwnfh23r"]
+    instance_ids: ["i-abcd12346", "i-abcd12345"]
+    force: True
+  tasks:
+    - name: launch ECS instance in VPC network
+      ali_instance:
+        alicloud_access_key: '{{ alicloud_access_key }}'
+        alicloud_secret_key: '{{ alicloud_secret_key }}'
+        alicloud_region: '{{ alicloud_region }}'
+        image: '{{ image }}'
+        system_disk_category: '{{ system_disk_category }}'
+        system_disk_size: '{{ system_disk_size }}'
+        instance_type: '{{ instance_type }}'
+        vswitch_id: '{{ vswitch_id }}'
+        assign_public_ip: '{{ assign_public_ip }}'
+        internet_charge_type: '{{ internet_charge_type }}'
+        max_bandwidth_out: '{{ max_bandwidth_out }}'
+        tags:
+            Name: created_one
+        host_name: '{{ host_name }}'
+        password: '{{ password }}'
+
+    - name: create a new vpc
+      ali_vpc:
+        cidr_block: '192.168.0.0/16'
+        name: 'Demo_VPC'
+        description: 'Demo VPC'
+
+    - name: with count and count_tag to create a number of instances
+      ali_instance:
+        alicloud_access_key: '{{ alicloud_access_key }}'
+        alicloud_secret_key: '{{ alicloud_secret_key }}'
+        alicloud_region: '{{ alicloud_region }}'
+        image: '{{ image }}'
+        system_disk_category: '{{ system_disk_category }}'
+        system_disk_size: '{{ system_disk_size }}'
+        instance_type: '{{ instance_type }}'
+        assign_public_ip: '{{ assign_public_ip }}'
+        security_groups: '{{ security_groups }}'
+        internet_charge_type: '{{ internet_charge_type }}'
+        max_bandwidth_out: '{{ max_bandwidth_out }}'
+        tags:
+            Name: created_one
+            Version: 0.1
+        count: 2
+        count_tag:
+            Name: created_one
+        host_name: '{{ host_name }}'
+        password: '{{ password }}'
+
+    - name: start instance
+      ali_instance:
+        alicloud_access_key: '{{ alicloud_access_key }}'
+        alicloud_secret_key: '{{ alicloud_secret_key }}'
+        alicloud_region: '{{ alicloud_region }}'
+        instance_ids: '{{ instance_ids }}'
+        state: 'running'
+
+    - name: reboot instance forcibly
+      ecs:
+        alicloud_access_key: '{{ alicloud_access_key }}'
+        alicloud_secret_key: '{{ alicloud_secret_key }}'
+        alicloud_region: '{{ alicloud_region }}'
+        instance_ids: '{{ instance_ids }}'
+        state: 'restarted'
+        force: '{{ force }}'
+
+    - name: Add instances to an security group
+      ecs:
+        alicloud_access_key: '{{ alicloud_access_key }}'
+        alicloud_secret_key: '{{ alicloud_secret_key }}'
+        alicloud_region: '{{ alicloud_region }}'
+        instance_ids: '{{ instance_ids }}'
+        security_groups: '{{ security_groups }}'
